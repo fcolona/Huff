@@ -1,7 +1,7 @@
 #include "node.hpp"
 
-Node::Node(char label, unsigned int freq) 
+Node::Node(const char label, const unsigned int freq) 
     : label(label), freq(freq){};
 
-Node::Node(char label, unsigned int freq, Node *left, Node *right) 
+Node::Node(const char label, const unsigned int freq, Node *left, Node *right) 
     : label(label), freq(freq), left(left), right(right){};
