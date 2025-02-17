@@ -101,18 +101,54 @@ std::map<char, boost::dynamic_bitset<>> build_encoding_map(Node *tree_head){
     return encoding_map;
 }
 
+void encode_file(std::ifstream &file, std::map<char, boost::dynamic_bitset<>> &encodings){
+    std::ofstream outfile("compressed_file", std::ios::binary);
+    if(!outfile.is_open()) throw std::runtime_error("Could not create file");
+
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
+    char ch;
+    char byte = 0;
+    int bit_index = 0;
+    int byte_counter = 0;
+    while(file.get(ch)){
+        for(int j = 0; j < encodings[ch].size(); j++){
+            if(bit_index == 8){
+                outfile.put(byte);
+                byte = 0;
+                bit_index = 0;
+                byte_counter++;
+            }
+            if(encodings[ch][j]){
+                byte |= (1 << (7 - bit_index));
+            }
+            bit_index++;
+        }
+    }
+    if (bit_index > 0){
+        outfile.put(byte);
+        byte_counter++;
+    }
+    std::cout << "Compressed file size: " << byte_counter << " bytes" << '\n';
+    outfile.close();
+}
+
 int main(){
     std::ifstream file;
     file.open("test.txt");
     if(!file.is_open()) throw std::invalid_argument("Could not open file");
     
     std::map<char, unsigned int> frequencies = build_frequencies_map(file);
+    std::cout << "Frequency map: \n";
     print_frequencies(frequencies);
     
     Node* tree_head = build_tree(frequencies);
     std::map<char, boost::dynamic_bitset<>> encodings = build_encoding_map(tree_head);
-    std::cout << "\n";
+    std::cout << "Encoding map: \n";
     print_encodings(encodings);
+    
+    encode_file(file, encodings);
     
     file.close();
     return 0;
