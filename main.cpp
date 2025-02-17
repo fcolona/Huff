@@ -1,10 +1,11 @@
 #include "node.hpp"
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <iostream>
 #include <fstream>
 #include <map>
 #include <queue>
 #include <stdexcept>
-#include <string>
+#include <boost/dynamic_bitset.hpp>
 
 std::map<char, unsigned int> build_frequencies_map(std::ifstream &file){
     std::map<char, unsigned int> frequencies;
@@ -31,16 +32,20 @@ void print_frequencies(const std::map<char, unsigned int> &frequencies){
     }
 }
 
-void print_encodings(const std::map<char, std::string> &encodings){
+void print_encodings(const std::map<char, boost::dynamic_bitset<>> &encodings){
     for(auto it = encodings.begin(); it != encodings.end(); it++){
         if(it->first == ' '){
-            std::cout << "Space";
+            std::cout << "Space: ";
         } else if (it->first == '\n'){
-            std::cout << "NL";
+            std::cout << "NL: ";
         } else {
-            std::cout << it->first;
+            std::cout << it->first << ": ";
         }
-        std::cout << ": " << it->second << '\n';
+        
+        for(int i = 0; i < it->second.size(); i++){
+            std::cout << it->second[i];
+        } 
+        std::cout << '\n';
     }
 }
 
@@ -70,27 +75,27 @@ Node *build_tree(std::map<char, unsigned int> &freq){
     return pq.top();
 }
 
-void traverse_tree(Node *head, std::map<char, std::string> &encodings, std::string &current_code){
+void traverse_tree(Node *head, std::map<char, boost::dynamic_bitset<>> &encodings, boost::dynamic_bitset<> &current_code){
     if(head->left == NULL && head->right == NULL){
         encodings[head->label] = current_code;
         return;       
     }
     
     if(head->left){
-        current_code.append("0");
+        current_code.push_back(0);
         traverse_tree(head->left, encodings, current_code);       
         current_code.resize(current_code.size()-1);
     }
     if(head->right){
-        current_code.append("1");
+        current_code.push_back(1);
         traverse_tree(head->right, encodings, current_code);
         current_code.resize(current_code.size()-1);
     }
 }
 
-std::map<char, std::string> build_encoding_map(Node *tree_head){
-    std::map<char, std::string> encoding_map;
-    std::string current_code;
+std::map<char, boost::dynamic_bitset<>> build_encoding_map(Node *tree_head){
+    std::map<char, boost::dynamic_bitset<>> encoding_map;
+    boost::dynamic_bitset<> current_code;
     traverse_tree(tree_head, encoding_map, current_code);
     
     return encoding_map;
@@ -105,7 +110,7 @@ int main(){
     print_frequencies(frequencies);
     
     Node* tree_head = build_tree(frequencies);
-    std::map<char, std::string> encodings= build_encoding_map(tree_head);
+    std::map<char, boost::dynamic_bitset<>> encodings = build_encoding_map(tree_head);
     std::cout << "\n";
     print_encodings(encodings);
     
