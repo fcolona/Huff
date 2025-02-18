@@ -1,7 +1,7 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include "frequencies.hpp"
+#include "../includes/frequencies.hpp"
 
 std::map<char, unsigned int> build_frequencies_map(std::ifstream &file){
     std::map<char, unsigned int> frequencies;

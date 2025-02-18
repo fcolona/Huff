@@ -1,5 +1,5 @@
-#include "node.hpp"
 #include <queue>
+#include "../includes/node.hpp"
 
 Node::Node(const char label, const unsigned int freq) 
     : label(label), freq(freq){};

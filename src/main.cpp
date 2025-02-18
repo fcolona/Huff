@@ -4,9 +4,9 @@
 #include <map>
 #include <stdexcept>
 #include <boost/dynamic_bitset.hpp>
-#include "node.hpp"
-#include "frequencies.hpp"
-#include "encodings.hpp"
+#include "../includes/node.hpp"
+#include "../includes/frequencies.hpp"
+#include "../includes/encodings.hpp"
 
 void encode_file(std::ifstream &file, std::map<char, boost::dynamic_bitset<>> &encodings){
     std::ofstream outfile("compressed_file", std::ios::binary);

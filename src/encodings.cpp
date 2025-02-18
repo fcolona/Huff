@@ -1,8 +1,8 @@
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <iostream>
 #include <map>
-#include "node.hpp"
-#include "encodings.hpp"
+#include "../includes/node.hpp"
+#include "../includes/encodings.hpp"
 
 void print_encodings(const std::map<char, boost::dynamic_bitset<>> &encodings){
     for(auto it = encodings.begin(); it != encodings.end(); it++){

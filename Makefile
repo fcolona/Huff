@@ -1,17 +1,17 @@
 OUT = build
 CC = g++
 
-main:
-	$(CC) main.cpp node.cpp frequencies.cpp encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/main
-	./build/main
+dev:
+	$(CC) src/main.cpp src/node.cpp src/frequencies.cpp src/encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/huff
+	./build/huff
 	
 .PHONY: build
 build:
-	$(CC) main.cpp node.cpp frequencies.cpp encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/build
+	$(CC) -O3 src/main.cpp src/node.cpp src/frequencies.cpp src/encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/huff
 	
 debug:
-	$(CC) -g main.cpp node.cpp frequencies.cpp encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/debug
-	gdb build/debug
+	$(CC) -g src/main.cpp src/node.cpp src/frequencies.cpp src/encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/huff
+	gdb build/huff
 
 clean:
 	rm -r $(OUT)/*
