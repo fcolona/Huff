@@ -134,6 +134,31 @@ void encode_file(std::ifstream &file, std::map<char, boost::dynamic_bitset<>> &e
     outfile.close();
 }
 
+std::string decode_file(std::ifstream &file, Node *tree_head){
+    Node *current = tree_head;
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
+    char byte;
+    std::string decoded_txt;
+    while(file.get(byte)){
+        for(int i = 7; i >= 0; i--){
+            if(!current->left && !current->right){
+                decoded_txt.push_back(current->label);
+                current = tree_head;
+            }
+
+            bool bit = (byte >> i) & 1;
+            if(!bit && tree_head->left){
+                current = current->left;
+            } else {
+                current = current->right;
+            }
+        }
+    }
+    return decoded_txt;
+}
+
 int main(){
     std::ifstream file;
     file.open("test.txt");
@@ -150,6 +175,12 @@ int main(){
     
     encode_file(file, encodings);
     
+    std::ifstream compressed_file;
+    compressed_file.open("compressed_file");
+    if(!compressed_file.is_open()) throw std::invalid_argument("Could not open file");
+    std::string decoded_txt = decode_file(compressed_file, tree_head);
+    
+    std::cout << "Decoded text: \n" << decoded_txt << '\n';
     file.close();
     return 0;
 }
