@@ -8,17 +8,32 @@
 #include "../includes/frequencies.hpp"
 #include "../includes/encodings.hpp"
 
-void encode_file(std::ifstream &file, std::map<char, boost::dynamic_bitset<>> &encodings){
+void encode_file(std::ifstream &file, boost::dynamic_bitset<> &tree_serialization, std::map<char, boost::dynamic_bitset<>> &encodings){
     std::ofstream outfile("compressed_file", std::ios::binary);
     if(!outfile.is_open()) throw std::runtime_error("Could not create file");
 
     file.clear();
     file.seekg(0, std::ios::beg);
-
-    char ch;
+    
+    //Write serialized tree
     char byte = 0;
     int bit_index = 0;
     int byte_counter = 0;
+    for(int i = 0; i < tree_serialization.size(); i++){
+        if(bit_index == 8){
+            outfile.put(byte);
+            byte = 0;
+            bit_index = 0;
+            byte_counter++;
+        }
+        if(tree_serialization[i]){
+            byte |= (1 << (7 - bit_index));
+        }
+        bit_index++;
+    }
+    
+    //Write encoded text content
+    char ch;
     while(file.get(ch)){
         for(int j = 0; j < encodings[ch].size(); j++){
             if(bit_index == 8){
@@ -80,17 +95,17 @@ int main(){
     std::cout << "Encoding map: \n";
     print_encodings(encodings);
     
-    boost::dynamic_bitset<> serialization = tree_head->serialize_subtree();
-    std::cout << "Tree serialization: " << serialization << std::endl;
+    boost::dynamic_bitset<> tree_serialization = tree_head->serialize_subtree();
+    std::cout << "Tree serialization: " << tree_serialization << std::endl;
     
-    encode_file(file, encodings);
+    encode_file(file, tree_serialization, encodings);
     
-    std::ifstream compressed_file;
+    /*std::ifstream compressed_file;
     compressed_file.open("compressed_file");
     if(!compressed_file.is_open()) throw std::invalid_argument("Could not open file");
     std::string decoded_txt = decode_file(compressed_file, tree_head);
     
-    std::cout << "Decoded text: \n" << decoded_txt << '\n';
+    std::cout << "Decoded text: \n" << decoded_txt << '\n';*/
     file.close();
     return 0;
 }
