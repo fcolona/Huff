@@ -1,3 +1,4 @@
+#include <boost/dynamic_bitset/dynamic_bitset.hpp>
 #include <queue>
 #include "../includes/node.hpp"
 
@@ -32,4 +33,26 @@ Node *Node::build_tree(std::map<char, unsigned int> &freq){
         pq.push(combined);
     }
     return pq.top();
+}
+
+void Node::serialize_subtree_aux(Node *head, boost::dynamic_bitset<> &bits){
+    if(!head->left && !head->right){
+        bits.push_back(1);
+        for(int i = 7; i >= 0; i--){
+            int bit = (head->label >> (7 - i)) & 1;               
+            bits.push_back(bit);
+        }
+        return;
+    }
+    
+    bits.push_back(0);
+    serialize_subtree_aux(head->left, bits);
+    serialize_subtree_aux(head->right, bits);
+}
+
+boost::dynamic_bitset<> Node::serialize_subtree(){
+    boost::dynamic_bitset<> bits;
+    serialize_subtree_aux(this, bits);
+    
+    return bits;
 }

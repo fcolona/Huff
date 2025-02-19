@@ -80,6 +80,9 @@ int main(){
     std::cout << "Encoding map: \n";
     print_encodings(encodings);
     
+    boost::dynamic_bitset<> serialization = tree_head->serialize_subtree();
+    std::cout << "Tree serialization: " << serialization << std::endl;
+    
     encode_file(file, encodings);
     
     std::ifstream compressed_file;
