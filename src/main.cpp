@@ -71,10 +71,12 @@ void encode_file(std::ifstream &file, std::string &outpath, boost::dynamic_bitse
     outfile.close();
 }
 
-std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start_of_content){
+std::string decode_file(std::ifstream &file, std::string &outpath, Node *tree_head, unsigned int start_of_content){
     Node *current = tree_head;
     file.clear();
     file.seekg(0, std::ios::beg);
+    std::ofstream outfile;
+    outfile.open(outpath);
 
     int end_of_content;
     char byte;
@@ -109,6 +111,7 @@ std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start
             }
 
             if(!current->left && !current->right){
+                outfile << current->label;
                 decoded_txt.push_back(current->label);
                 current = tree_head;
             }
@@ -116,6 +119,7 @@ std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start
         }
         ini = 1;
     }
+    outfile.close();
     return decoded_txt;
 }
 
@@ -124,25 +128,25 @@ int main(int argc, char *argv[]){
         throw std::invalid_argument("Must provide at least an input file name and an output file name");
     }
     
-    std::string in_path;
-    std::string out_path;
+    std::string inpath;
+    std::string outpath;
     bool compress;
     if(argc == 3){
-        in_path = argv[1];
-        out_path = argv[2];
+        inpath = argv[1];
+        outpath = argv[2];
         compress = true;
     } else {
         std::string flag(argv[1]);
         if(flag != "-d") throw std::invalid_argument("Must provide a valid flag");
 
-        in_path = argv[2];
-        out_path = argv[3];
+        inpath = argv[2];
+        outpath = argv[3];
         compress = false;
     }
     
     if(compress){
         std::ifstream file;
-        file.open(in_path);
+        file.open(inpath);
         if(!file.is_open()) throw std::invalid_argument("Could not open file");
 
         std::map<char, unsigned int> frequencies = build_frequencies_map(file);
@@ -156,18 +160,16 @@ int main(int argc, char *argv[]){
     
         boost::dynamic_bitset<> tree_serialization = tree_head->serialize_subtree();
         std::cout << "Tree serialization: " << tree_serialization << std::endl;
-        encode_file(file, out_path, tree_serialization, encodings);
+        encode_file(file, outpath, tree_serialization, encodings);
         file.close();
     } else {
         std::ifstream compressed_file;
-        compressed_file.open("compressed_file");
+        compressed_file.open(inpath);
         if(!compressed_file.is_open()) throw std::invalid_argument("Could not open file");
 
         unsigned int last_bit_pos;
         Node *tree_head = Node::deserialize_tree(compressed_file, last_bit_pos);
-        std::string decoded_txt = decode_file(compressed_file, tree_head, last_bit_pos);
-    
-        std::cout << "Decoded text: \n" << decoded_txt << '\n';
+        decode_file(compressed_file, outpath, tree_head, last_bit_pos);
         compressed_file.close();
     }
     return 0;
