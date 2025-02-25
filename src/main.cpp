@@ -1,4 +1,5 @@
 #include <boost/dynamic_bitset/dynamic_bitset.hpp>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <map>
@@ -8,39 +9,53 @@
 #include "../includes/frequencies.hpp"
 #include "../includes/encodings.hpp"
 
+#define HEADER_SIZE 4
+
 void encode_file(std::ifstream &file, boost::dynamic_bitset<> &tree_serialization, std::map<char, boost::dynamic_bitset<>> &encodings){
     std::ofstream outfile("compressed_file", std::ios::binary);
     if(!outfile.is_open()) throw std::runtime_error("Could not create file");
 
     file.clear();
     file.seekg(0, std::ios::beg);
+
+    //Write header
+    char ch;
+    int bit_counter = 0;
+    while(file.get(ch)){
+        bit_counter += encodings[ch].size();        
+    }
+    bit_counter += tree_serialization.size();
+    bit_counter += 8 * HEADER_SIZE;
+    outfile.write(reinterpret_cast<const char *>(&bit_counter), sizeof(bit_counter));
     
     //Write serialized tree
     char byte = 0;
     int bit_index = 0;
-    int byte_counter = 0;
+    int message_byte_counter = 0;
     for(int i = 0; i < tree_serialization.size(); i++){
         if(bit_index == 8){
             outfile.put(byte);
             byte = 0;
             bit_index = 0;
-            byte_counter++;
+            message_byte_counter++;
         }
         if(tree_serialization[i]){
             byte |= (1 << (7 - bit_index));
         }
         bit_index++;
     }
+
+    file.clear();
+    file.seekg(0, std::ios::beg);
     
     //Write encoded text content
-    char ch;
     while(file.get(ch)){
         for(int j = 0; j < encodings[ch].size(); j++){
             if(bit_index == 8){
                 outfile.put(byte);
                 byte = 0;
                 bit_index = 0;
-                byte_counter++;
+                message_byte_counter++;
             }
             if(encodings[ch][j]){
                 byte |= (1 << (7 - bit_index));
@@ -50,15 +65,25 @@ void encode_file(std::ifstream &file, boost::dynamic_bitset<> &tree_serializatio
     }
     if (bit_index > 0){
         outfile.put(byte);
-        byte_counter++;
+        message_byte_counter++;
     }
-    std::cout << "Compressed file size: " << byte_counter << " bytes" << '\n';
+    std::cout << "Compressed file size: " << message_byte_counter + HEADER_SIZE << " bytes" << '\n';
     outfile.close();
 }
 
 std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start_of_content){
     Node *current = tree_head;
     file.clear();
+    file.seekg(0, std::ios::beg);
+
+    int end_of_content;
+    char byte;
+    char header_bytes[HEADER_SIZE];
+    for(int i = 0; i < HEADER_SIZE; i++){
+        file.get(byte);
+        header_bytes[i] = byte;
+    }
+    std::memcpy(&end_of_content, header_bytes, HEADER_SIZE);
 
     int ini;
     if(start_of_content % 8 == 0){
@@ -70,10 +95,12 @@ std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start
         ini = start_of_content%8;
     }
 
-    char byte;
     std::string decoded_txt;
+    int bit_counter = start_of_content;
     while(file.get(byte)){
         for(int i = 7 - ini; i >= -1; i--){
+            if(bit_counter > end_of_content) return decoded_txt;
+
             bool bit = (byte >> (i+1)) & 1;
             if(!bit && tree_head->left){
                 current = current->left;
@@ -85,6 +112,7 @@ std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start
                 decoded_txt.push_back(current->label);
                 current = tree_head;
             }
+            bit_counter++;
         }
         ini = 1;
     }

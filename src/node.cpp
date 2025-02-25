@@ -115,7 +115,8 @@ Node *Node::deserialize_tree(std::ifstream &file, unsigned int &last_bit_pos){
     file.clear();
     file.seekg(0, std::ios::beg);
 
-    unsigned int current_bit_pos = 1;
+    //first bit after the header
+    unsigned int current_bit_pos = 33;
     Node *tree_head = deserialize_tree_aux(file, current_bit_pos);
     
     last_bit_pos = current_bit_pos;
