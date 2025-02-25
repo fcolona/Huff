@@ -56,27 +56,37 @@ void encode_file(std::ifstream &file, boost::dynamic_bitset<> &tree_serializatio
     outfile.close();
 }
 
-std::string decode_file(std::ifstream &file, Node *tree_head){
+std::string decode_file(std::ifstream &file, Node *tree_head, unsigned int start_of_content){
     Node *current = tree_head;
     file.clear();
-    file.seekg(0, std::ios::beg);
+
+    int ini;
+    if(start_of_content % 8 == 0){
+    //when start_of_content is the last bit of a byte
+        file.seekg(start_of_content/8 - 1, std::ios::beg);
+        ini = 7;
+    } else {
+        file.seekg(start_of_content/8, std::ios::beg);
+        ini = start_of_content%8;
+    }
 
     char byte;
     std::string decoded_txt;
     while(file.get(byte)){
-        for(int i = 7; i >= 0; i--){
-            if(!current->left && !current->right){
-                decoded_txt.push_back(current->label);
-                current = tree_head;
-            }
-
-            bool bit = (byte >> i) & 1;
+        for(int i = 7 - ini; i >= -1; i--){
+            bool bit = (byte >> (i+1)) & 1;
             if(!bit && tree_head->left){
                 current = current->left;
             } else {
                 current = current->right;
             }
+
+            if(!current->left && !current->right){
+                decoded_txt.push_back(current->label);
+                current = tree_head;
+            }
         }
+        ini = 1;
     }
     return decoded_txt;
 }
@@ -100,12 +110,15 @@ int main(){
     
     encode_file(file, tree_serialization, encodings);
     
-    /*std::ifstream compressed_file;
+    std::ifstream compressed_file;
     compressed_file.open("compressed_file");
     if(!compressed_file.is_open()) throw std::invalid_argument("Could not open file");
-    std::string decoded_txt = decode_file(compressed_file, tree_head);
+
+    unsigned int last_bit_pos;
+    tree_head = Node::deserialize_tree(compressed_file, last_bit_pos);
+    std::string decoded_txt = decode_file(compressed_file, tree_head, last_bit_pos);
     
-    std::cout << "Decoded text: \n" << decoded_txt << '\n';*/
+    std::cout << "Decoded text: \n" << decoded_txt << '\n';
     file.close();
     return 0;
 }
