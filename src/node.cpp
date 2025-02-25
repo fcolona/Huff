@@ -3,6 +3,8 @@
 #include <queue>
 #include "../includes/node.hpp"
 
+#define HEADER_SIZE 4
+
 Node::Node()
     : label('\0'), freq(0){}
 
@@ -115,8 +117,7 @@ Node *Node::deserialize_tree(std::ifstream &file, unsigned int &last_bit_pos){
     file.clear();
     file.seekg(0, std::ios::beg);
 
-    //first bit after the header
-    unsigned int current_bit_pos = 33;
+    unsigned int current_bit_pos = 8 * HEADER_SIZE + 1;
     Node *tree_head = deserialize_tree_aux(file, current_bit_pos);
     
     last_bit_pos = current_bit_pos;

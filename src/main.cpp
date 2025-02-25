@@ -150,16 +150,16 @@ int main(int argc, char *argv[]){
         if(!file.is_open()) throw std::invalid_argument("Could not open file");
 
         std::map<char, unsigned int> frequencies = build_frequencies_map(file);
-        std::cout << "Frequency map: \n";
-        print_frequencies(frequencies);
+        //std::cout << "Frequency map: \n";
+        //print_frequencies(frequencies);
     
         Node* tree_head = Node::build_tree(frequencies);
         std::map<char, boost::dynamic_bitset<>> encodings = build_encoding_map(tree_head);
-        std::cout << "Encoding map: \n";
-        print_encodings(encodings);
+        //std::cout << "Encoding map: \n";
+        //print_encodings(encodings);
     
         boost::dynamic_bitset<> tree_serialization = tree_head->serialize_subtree();
-        std::cout << "Tree serialization: " << tree_serialization << std::endl;
+        //std::cout << "Tree serialization: " << tree_serialization << std::endl;
         encode_file(file, outpath, tree_serialization, encodings);
         file.close();
     } else {
