@@ -161,6 +161,7 @@ int main(int argc, char *argv[]){
         boost::dynamic_bitset<> tree_serialization = tree_head->serialize_subtree();
         //std::cout << "Tree serialization: " << tree_serialization << std::endl;
         encode_file(file, outpath, tree_serialization, encodings);
+        std::cout << "File sucessfully compressed!" << std::endl;
         file.close();
     } else {
         std::ifstream compressed_file;
@@ -171,6 +172,7 @@ int main(int argc, char *argv[]){
         Node *tree_head = Node::deserialize_tree(compressed_file, last_bit_pos);
         decode_file(compressed_file, outpath, tree_head, last_bit_pos);
         compressed_file.close();
+        std::cout << "File sucessfully decompressed!" << std::endl;
     }
     return 0;
 }
