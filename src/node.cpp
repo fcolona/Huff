@@ -25,7 +25,7 @@ public:
         return false;
     }
 };
-Node *Node::build_tree(std::map<char, unsigned int> &freq){
+Node *Node::build_tree(const std::map<char, unsigned int> &freq){
     std::priority_queue<Node*, std::vector<Node*>, Compare> pq;
     for(auto it = freq.begin(); it != freq.end(); it++){
         Node* new_node = new Node(it->first, it->second);
@@ -44,7 +44,7 @@ Node *Node::build_tree(std::map<char, unsigned int> &freq){
     return pq.top();
 }
 
-void Node::serialize_subtree_aux(Node *head, boost::dynamic_bitset<> &bits){
+void Node::serialize_subtree_aux(const Node *head, boost::dynamic_bitset<> &bits){
     if(!head->left && !head->right){
         bits.push_back(1);
         for(int i = 7; i >= 0; i--){

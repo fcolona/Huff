@@ -21,7 +21,7 @@ void print_encodings(const std::map<char, boost::dynamic_bitset<>> &encodings){
     }
 }
 
-void populate_encodings(Node *head, std::map<char, boost::dynamic_bitset<>> &encodings, boost::dynamic_bitset<> &current_code){
+void populate_encodings(const Node *head, std::map<char, boost::dynamic_bitset<>> &encodings, boost::dynamic_bitset<> &current_code){
     if(head->left == NULL && head->right == NULL){
         encodings[head->label] = current_code;
         return;       
@@ -39,7 +39,7 @@ void populate_encodings(Node *head, std::map<char, boost::dynamic_bitset<>> &enc
     }
 }
 
-std::map<char, boost::dynamic_bitset<>> build_encoding_map(Node *tree_head){
+std::map<char, boost::dynamic_bitset<>> build_encoding_map(const Node *tree_head){
     std::map<char, boost::dynamic_bitset<>> encoding_map;
     boost::dynamic_bitset<> current_code;
     populate_encodings(tree_head, encoding_map, current_code);

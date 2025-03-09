@@ -11,7 +11,7 @@
 
 #define HEADER_SIZE 4
 
-void encode_file(std::ifstream &file, std::string &outpath, boost::dynamic_bitset<> &tree_serialization, std::map<char, boost::dynamic_bitset<>> &encodings){
+void encode_file(std::ifstream &file, const std::string &outpath, const boost::dynamic_bitset<> &tree_serialization, std::map<char, boost::dynamic_bitset<>> &encodings){
     std::ofstream outfile(outpath, std::ios::binary);
     if(!outfile.is_open()) throw std::runtime_error("Could not create file");
 
@@ -71,8 +71,8 @@ void encode_file(std::ifstream &file, std::string &outpath, boost::dynamic_bitse
     outfile.close();
 }
 
-std::string decode_file(std::ifstream &file, std::string &outpath, Node *tree_head, unsigned int start_of_content){
-    Node *current = tree_head;
+std::string decode_file(std::ifstream &file, const std::string &outpath, const Node *tree_head, unsigned int start_of_content){
+    const Node *current = tree_head;
     file.clear();
     file.seekg(0, std::ios::beg);
     std::ofstream outfile;

@@ -3,7 +3,7 @@ CC = g++
 
 dev:
 	$(CC) src/main.cpp src/node.cpp src/frequencies.cpp src/encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/huff
-	./build/huff
+	./build/huff test.txt build/compr
 	
 .PHONY: build
 build:
