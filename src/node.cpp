@@ -6,13 +6,13 @@
 #define HEADER_SIZE 4
 
 Node::Node()
-    : label('\0'), freq(0){}
+    : label('\0'), freq(0), left(nullptr), right(nullptr){}
 
 Node::Node(const char label) 
-    : label(label), freq(0){};
+    : label(label), freq(0), left(nullptr), right(nullptr){};
 
 Node::Node(const char label, const unsigned int freq) 
-    : label(label), freq(freq){};
+    : label(label), freq(freq), left(nullptr), right(nullptr){};
 
 Node::Node(const char label, const unsigned int freq, Node *left, Node *right) 
     : label(label), freq(freq), left(left), right(right){};
@@ -42,6 +42,17 @@ Node *Node::build_tree(const std::map<char, unsigned int> &freq){
         pq.push(combined);
     }
     return pq.top();
+}
+
+void Node::delete_tree(Node *head){
+    if(!head->left && !head->right){
+        delete head;
+        return;
+    }
+
+    delete_tree(head->left);
+    delete_tree(head->right);
+    delete head;
 }
 
 void Node::serialize_subtree_aux(const Node *head, boost::dynamic_bitset<> &bits){

@@ -11,7 +11,7 @@ build:
 	
 debug:
 	$(CC) -g src/main.cpp src/node.cpp src/frequencies.cpp src/encodings.cpp -I libs/boost_1_87_0 -o $(OUT)/huff
-	gdb build/huff
+	gdb --args build/huff test.txt build/compr
 
 clean:
 	rm -r $(OUT)/*

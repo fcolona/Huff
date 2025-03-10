@@ -16,6 +16,7 @@ public:
     Node(const char label, const unsigned int freq, Node *left, Node *right);
     
     static Node *build_tree(std::map<char, unsigned int> const &freq);
+    static void delete_tree(Node *head);
     //last_bit_pos is an output parameter
     //it will store the last read bit position + 1 
     static Node *deserialize_tree(std::ifstream &file, unsigned int &last_bit_pos);

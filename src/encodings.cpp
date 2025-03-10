@@ -22,7 +22,7 @@ void print_encodings(const std::map<char, boost::dynamic_bitset<>> &encodings){
 }
 
 void populate_encodings(const Node *head, std::map<char, boost::dynamic_bitset<>> &encodings, boost::dynamic_bitset<> &current_code){
-    if(head->left == NULL && head->right == NULL){
+    if(head->left == nullptr && head->right == nullptr){
         encodings[head->label] = current_code;
         return;       
     }
