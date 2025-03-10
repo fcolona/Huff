@@ -4,8 +4,8 @@
 CLI program that utilizes the Huffman Coding to perform lossless data compression and decompression in text files.
 
 ## Screenshots
-![screenshot1](https://raw.github.com/fcolona/Text-File-Compressor/main/screenshot1.svg)
-![screenshot2](https://raw.github.com/fcolona/Text-File-Compressor/main/screenshot2.svg)
+![screenshot1](https://raw.github.com/fcolona/Huff/main/screenshot1.svg)
+![screenshot2](https://raw.github.com/fcolona/Huff/main/screenshot2.svg)
 
 ## Main Features
 - Lossless compression
