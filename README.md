@@ -12,6 +12,7 @@ CLI program that utilizes the Huffman Coding to perform lossless data compressio
 - Easy to use
 - Efficient
 - Worldwide language support
+- Multiple file formats support
 
 ## Main Technologies:
 - C++
@@ -22,7 +23,7 @@ CLI program that utilizes the Huffman Coding to perform lossless data compressio
 Having tested compressing parts of books in english and portuguese (each part varying from 1000 bytes to 12000 bytes), the program had an average rate of reduction of 40.7% in the size of the files.
 
 ## How to Set up
-### On Arch Linux
+### On Arch-based distros
 - Download the pre-compiled binary from the releases tab
 
 ### On any other distro
@@ -38,7 +39,7 @@ Having tested compressing parts of books in english and portuguese (each part va
     - ```mv boost_1_87_0.tar.gz includes```
 - Run build script
     - ```make build```
-- Copy the executable to user the binary folder 
+- Copy the executable to the user binary folder 
     - ```cp build/huff /usr/bin```
 
 ## Try It Out!
